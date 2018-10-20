@@ -34,10 +34,25 @@ class AuthenticationController < ApplicationController
   def index
   end
 
-  def create
+  def new
   end
 
-  def new
+  def create
+    token_id = params[:token_id]
+    name = params[:name]
+    email = params[:email]
+
+    account = Account.create(token_id: token_id,name: name,email: email)
+
+    if account.save
+       # set user info in session
+       session[:current_user] = account
+       # return json data to js file
+       return render json: {"userInfo"=> session[:current_user]}
+    else
+      return render json: {"result"=> "failed"}
+    end
+
   end
 
 end

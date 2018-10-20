@@ -1,9 +1,19 @@
 <h1> Home page </h1>
-<h2> Hello <%= session[:current_user]["name"]%> </h2>
+<h2> Hello <%= session[:current_user] != nil ? session[:current_user]["name"] : "anonymous"%> </h2>
 <Input id="logout" type="button" class="btn btn-danger" value="Logout" />
 
 <script>
 $(document).ready(function() {
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        // user exists, do stuff
+    } else {
+        // no user
+        window.location.replace("/")
+    }
+});
+
 $("#logout").click(()=>{
     firebase.auth().signOut()
       .then(function() {

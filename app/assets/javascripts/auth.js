@@ -22,8 +22,11 @@ function registerWithEmailAndPassword(name, email, password) {
       })
     })
     .catch(function(error) {
-      var errorMessage = error.message
+      const errorMessage = error.message
 
+      // set the error Message and show it
+      $("#registerErrorMessage").text(errorMessage)
+      $("#registerErrorMessage").show()
       console.log(errorMessage)
     })
 }
@@ -89,6 +92,8 @@ $(document).ready(function() {
   $("#registerForm").submit(event => {
     // Stop the browser from submitting the form.
     event.preventDefault()
+    // hide error message
+    $("#registerErrorMessage").hide()
 
     const name = event.target.name.value
     const email = event.target.email.value
@@ -99,6 +104,9 @@ $(document).ready(function() {
 
   // sing up with google account
   $("#google_singup").click(() => {
+    // hide error message
+    $("#registerErrorMessage").hide()
+
     const provider = new firebase.auth.GoogleAuthProvider()
 
     firebase
@@ -124,6 +132,12 @@ $(document).ready(function() {
             // if result is fail, stop execution and show error message
             if (data.result == "fail") {
               console.log(data.message)
+
+              $("#registerErrorMessage").text(
+                "You have an account with this google account"
+              )
+              $("#registerErrorMessage").show()
+
               return
             }
             // now ready to go to home page

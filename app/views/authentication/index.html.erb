@@ -1,3 +1,23 @@
-login page
+<div class="container">
+<div class="wrapper">
 
-<input type="button" class="btn btn-primary" value="test"/>
+  <form class="loginForm" style="width:40%; margin:0 auto;">
+    <img class="mb-4" src="" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Please Log in</h1>
+
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control mb-3" placeholder="Password" required>
+   
+    <button class="btn btn-primary mb-3" type="submit">Log in</button>
+
+    <div>
+    <%= link_to "Sing up", new_authentication_path %>
+    </div>
+    
+  </form>
+
+</div>
+</div>

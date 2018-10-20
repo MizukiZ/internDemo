@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   root 'authentication#index'
   resources :authentication
+  resources :teams
+  resources :players
 
   post '/login', to: 'users#login'
   get '/logout', to: 'users#logout'

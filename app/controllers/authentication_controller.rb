@@ -42,15 +42,15 @@ class AuthenticationController < ApplicationController
     name = params[:name]
     email = params[:email]
 
+    begin
     account = Account.create(token_id: token_id,name: name,email: email)
-
-    if account.save
-       # set user info in session
-       session[:current_user] = account
-       # return json data to js file
-       return render json: {"userInfo"=> session[:current_user]}
-    else
-      return render json: {"result"=> "failed"}
+     # set user info in session
+     session[:current_user] = account
+     # return json data to js file
+     return render json: {"userInfo"=> session[:current_user]}
+    rescue StandardError => e
+      # return fail result and error message
+      return render json: {"result"=> "fail", "message" => e}
     end
 
   end

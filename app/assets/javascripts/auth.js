@@ -73,45 +73,6 @@ function verifyTokenAndGoToHome(user) {
     })
 }
 
-// firebase.auth().onAuthStateChanged(function(user) {
-//   if (user) {
-//     // User is signed in.
-//     console.log("user is in")
-
-//     var user = firebase.auth().currentUser
-//     console.log("Your email address is " + user.email)
-
-//     // get user token form firebase
-//     user
-//       .getIdToken(/* forceRefresh */ true)
-//       .then(idToken => {
-//         // Send token to your backend via HTTPS
-//         $.post("/login", { token: idToken }, data => {
-//           // get firebase user id
-//           const user_id = data.tokenData.sub
-
-//           // post the firebase user id to get corresponding user in porstgers databse
-//           $.post("/login", { token_id: user_id }, data => {
-//             // now ready to go to home page
-//             // window.location.replace("/teams")
-
-//             console.log(data)
-//           }).catch(function(error) {
-//             // Handle error
-//             console.log("decode error")
-//           })
-//         })
-//       })
-//       .catch(function(error) {
-//         // Handle error
-//         console.log("decode error")
-//       })
-//   } else {
-//     // No user is signed in.
-//     console.log("no user is in")
-//   }
-// })
-
 $(document).ready(function() {
   // login
   $("#loginForm").submit(event => {
@@ -160,6 +121,11 @@ $(document).ready(function() {
             email: email
           },
           data => {
+            // if result is fail, stop execution and show error message
+            if (data.result == "fail") {
+              console.log(data.message)
+              return
+            }
             // now ready to go to home page
             window.location.replace("/teams")
           }

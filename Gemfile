@@ -31,6 +31,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'firebase_id_token', '~> 2.3.0' # for verify firebase token
 gem 'redis' # needed for firebase_id_token library
 gem 'jquery-rails' # for using jquery
+gem 'bootstrap', '~> 4.1.3'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

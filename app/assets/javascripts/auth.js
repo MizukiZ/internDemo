@@ -17,10 +17,11 @@ function registerWithEmailAndPassword(name, email, password) {
           // now ready to go to home page
           window.location.replace("/teams")
         }
-      )
+      ).catch(error => {
+        console.log(error.message)
+      })
     })
     .catch(function(error) {
-      var errorCode = error.code
       var errorMessage = error.message
 
       console.log(errorMessage)
@@ -38,7 +39,6 @@ function signInWithEmailAndPassword(email, password) {
       verifyTokenAndGoToHome(user)
     })
     .catch(function(error) {
-      var errorCode = error.code
       var errorMessage = error.message
 
       console.log(errorMessage)
@@ -134,5 +134,65 @@ $(document).ready(function() {
     const password = event.target.password.value
 
     registerWithEmailAndPassword(name, email, password)
+  })
+
+  // sing up with google account
+  $("#google_singup").click(() => {
+    const provider = new firebase.auth.GoogleAuthProvider()
+
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(function(result) {
+        // The signed-in user info.
+        const user = result.user
+
+        const name = user.displayName
+        const email = user.email
+        const firebase_user_id = user.uid
+
+        // pass data to create new account
+        $.post(
+          "/authentication",
+          {
+            token_id: firebase_user_id,
+            name: name,
+            email: email
+          },
+          data => {
+            // now ready to go to home page
+            window.location.replace("/teams")
+          }
+        ).catch(error => {
+          console.log(error.message)
+        })
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorMessage = error.message
+
+        console.log(errorMessage)
+      })
+  })
+
+  // login with google account
+  $("#google_login").click(() => {
+    const provider = new firebase.auth.GoogleAuthProvider()
+
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(function(result) {
+        // The signed-in user info.
+        const user = result.user
+
+        verifyTokenAndGoToHome(user)
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorMessage = error.message
+
+        console.log(errorMessage)
+      })
   })
 })

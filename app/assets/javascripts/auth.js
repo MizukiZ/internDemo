@@ -44,6 +44,9 @@ function signInWithEmailAndPassword(email, password) {
     .catch(function(error) {
       var errorMessage = error.message
 
+      // set the error Message and show it
+      $("#loginErrorMessage").text(errorMessage)
+      $("#loginErrorMessage").show()
       console.log(errorMessage)
     })
 }
@@ -60,10 +63,22 @@ function verifyTokenAndGoToHome(user) {
 
         // post the firebase user id to get corresponding user in porstgers databse
         $.post("/login", { token_id: user_id }, data => {
+          console.log(data)
+          // if result is fail, stop execution and show error message
+          if (data.result === "fail") {
+            const user = firebase.auth().currentUser
+
+            // delete firebase unnecessary current user
+            user.delete().then(function() {
+              // User deleted.
+
+              $("#loginErrorMessage").text(data.message)
+              $("#loginErrorMessage").show()
+            })
+            return
+          }
           // now ready to go to home page
           window.location.replace("/teams")
-
-          console.log(data)
         }).catch(function(error) {
           // Handle error
           console.log("decode error")
@@ -81,6 +96,8 @@ $(document).ready(function() {
   $("#loginForm").submit(event => {
     // Stop the browser from submitting the form.
     event.preventDefault()
+    // hide error message
+    $("#loginErrorMessage").hide()
 
     const email = event.target.email.value
     const password = event.target.password.value
@@ -157,6 +174,9 @@ $(document).ready(function() {
 
   // login with google account
   $("#google_login").click(() => {
+    // hide error message
+    $("#loginErrorMessage").hide()
+
     const provider = new firebase.auth.GoogleAuthProvider()
 
     firebase

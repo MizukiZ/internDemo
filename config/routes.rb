@@ -6,6 +6,6 @@ Rails.application.routes.draw do
   resources :teams
   resources :players
 
-  post '/login', to: 'users#login'
-  get '/logout', to: 'users#logout'
+  post '/login', to: 'authentication#login'
+  get '/logout', to: 'authentication#logout'
 end

@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
+
+  <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase.js"></script>
+<script>
+//  Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCi8QlIsoY7-hWJ1TtK5UcXFzhIVfPLV4Y",
+    authDomain: "authtutorial-12ac0.firebaseapp.com",
+    databaseURL: "https://authtutorial-12ac0.firebaseio.com",
+    projectId: "authtutorial-12ac0",
+    storageBucket: "authtutorial-12ac0.appspot.com",
+    messagingSenderId: "1044540275050"
+  };
+  firebase.initializeApp(config);
+</script>
+
     <title>InternDemo</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

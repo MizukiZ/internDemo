@@ -3,11 +3,14 @@ class AuthenticationController < ApplicationController
 
   def login
 
-    if params[:email]
+    if params[:token_id]
+
+      #get corresponding account data using token id
+      account = Account.where(token_id: params[:token_id]).take
       # set user info in session
-      session[:user_email] = params[:email]
+      session[:current_user] = account
       # return json data to js file
-      return render json: {"path"=> posts_path}
+      return render json: {"userInfo"=> session[:current_user]}
     end
 
     #  when token is sent

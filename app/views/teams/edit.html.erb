@@ -1,0 +1,5 @@
+<%= form_with model:@team, local: true do |form| %>
+  <%= form.label :name %>
+  <%= form.text_field :name %>
+  <%= submit_tag("Update")%>
+<% end %>

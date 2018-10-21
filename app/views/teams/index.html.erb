@@ -5,15 +5,6 @@
 <script>
 $(document).ready(function() {
 
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        // user exists, do stuff
-    } else {
-        // no user
-        window.location.replace("/")
-    }
-});
-
 $("#logout").click(()=>{
     firebase.auth().signOut()
       .then(function() {

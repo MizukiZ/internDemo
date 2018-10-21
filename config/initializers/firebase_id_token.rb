@@ -5,5 +5,6 @@ FirebaseIdToken.configure do |config|
   # set firebase project id
   config.project_ids = ['authtutorial-12ac0']
   # initialize redis and set 
-  config.redis = Redis.new(url: "redis://localhost:6379/0")
+  uri = ENV["REDISTOGO_URL"] || "redis://localhost:6379/0"
+  config.redis = Redis.new(url: uri)
 end

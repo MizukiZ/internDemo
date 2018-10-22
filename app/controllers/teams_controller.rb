@@ -1,6 +1,6 @@
 class TeamsController < ApplicationController
   before_action :current_user_validation
-
+  before_action :find_team,only: [:show,:update,:edit,:destroy]
   
   def index
     @teams = Team.all
@@ -21,12 +21,9 @@ class TeamsController < ApplicationController
   end
 
   def edit
-    @team =Team.find(params[:id])
   end
 
   def update
-    @team =Team.find(params[:id])
-
     if @team.update(team_params)
       redirect_to teams_path
     else
@@ -35,8 +32,6 @@ class TeamsController < ApplicationController
   end
 
   def destroy
-    @team =Team.find(params[:id])
-
     @team.destroy
     redirect_to teams_path
   end
@@ -49,6 +44,10 @@ class TeamsController < ApplicationController
 
   def current_user_validation
     redirect_to root_path if !session[:current_user]
+  end
+
+  def find_team
+    @team = Team.find(params[:id])
   end
 
 end

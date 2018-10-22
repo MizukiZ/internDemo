@@ -1,6 +1,7 @@
 class PlayersController < ApplicationController
 
   before_action :current_user_validation
+  before_action :find_player,only: [:show,:update,:edit,:destroy]
 
   
   def index
@@ -22,12 +23,9 @@ class PlayersController < ApplicationController
   end
 
   def edit
-    @player =Player.find(params[:id])
   end
 
   def update
-    @player =Player.find(params[:id])
-
     if @player.update(player_params)
       redirect_to players_path
     else
@@ -36,8 +34,6 @@ class PlayersController < ApplicationController
   end
 
   def destroy
-    @player =Player.find(params[:id])
-
     @player.destroy
     redirect_to players_path
   end
@@ -50,6 +46,10 @@ class PlayersController < ApplicationController
 
   def current_user_validation
     redirect_to root_path if !session[:current_user]
+  end
+
+  def find_player
+    @player = Player.find(params[:id])
   end
 
 end

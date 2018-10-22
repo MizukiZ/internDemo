@@ -1,3 +1,5 @@
+<%= render 'layouts/navbar'%>
+
 <%= form_with model:@player, url: "/players", local: true do |form| %>
   <%= form.label :name %>
   <%= form.text_field :name %>

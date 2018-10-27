@@ -33,6 +33,9 @@ gem 'redis' # needed for firebase_id_token library
 gem 'jquery-rails' # for using jquery
 gem 'bootstrap', '~> 4.1.3'
 
+gem 'webpacker'
+gem 'react-rails'
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 

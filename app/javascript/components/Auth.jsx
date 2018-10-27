@@ -2,7 +2,9 @@ import React from "react"
 import axios from "axios"
 import PropTypes from "prop-types"
 class Auth extends React.Component {
-  state = {}
+  state = {
+    registerMode: false
+  }
 
   registerWithEmailAndPassword = (name, email, password) => {
     firebase
@@ -98,6 +100,55 @@ class Auth extends React.Component {
       })
   }
 
+  register_with_google = () => {
+    // hide error message
+    $("#registerErrorMessage").hide()
+
+    const provider = new firebase.auth.GoogleAuthProvider()
+
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(function(result) {
+        // The signed-in user info.
+        const user = result.user
+
+        const name = user.displayName
+        const email = user.email
+        const firebase_user_id = user.uid
+
+        // pass data to create new account
+        axios
+          .post("/authentication", {
+            token_id: firebase_user_id,
+            name: name,
+            email: email
+          })
+          .then(data => {
+            // if result is fail, stop execution and show error message
+            if (data.data.result == "fail") {
+              $("#registerErrorMessage").text(
+                "You have an account with this google account"
+              )
+              $("#registerErrorMessage").show()
+
+              return
+            }
+            // now ready to go to home page
+            window.location.replace("/teams")
+          })
+          .catch(error => {
+            console.log(error.message)
+          })
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorMessage = error.message
+
+        console.log(errorMessage)
+      })
+  }
+
   login_With_Goolge = () => {
     // hide error message
     $("#loginErrorMessage").hide()
@@ -121,19 +172,32 @@ class Auth extends React.Component {
       })
   }
 
+  toggleRegisterMode = () => {
+    this.setState(prevState => ({ registerMode: !prevState.registerMode }))
+  }
+
   render() {
     return (
       <React.Fragment>
-        <LoginForm
-          onLogin={this.signInWithEmailAndPassword}
-          loginWithGoogle={this.login_With_Goolge}
-        />
+        {!this.state.registerMode ? (
+          <LoginForm
+            onLogin={this.signInWithEmailAndPassword}
+            loginWithGoogle={this.login_With_Goolge}
+            toggleRegisterMode={this.toggleRegisterMode}
+          />
+        ) : (
+          <RegisterForm
+            onRegister={this.registerWithEmailAndPassword}
+            registerWithGoogle={this.register_with_google}
+            toggleRegisterMode={this.toggleRegisterMode}
+          />
+        )}
       </React.Fragment>
     )
   }
 }
 
-function LoginForm({ onLogin, loginWithGoogle }) {
+function LoginForm({ onLogin, loginWithGoogle, toggleRegisterMode }) {
   return (
     <React.Fragment>
       <form
@@ -193,12 +257,112 @@ function LoginForm({ onLogin, loginWithGoogle }) {
 
       <button
         onClick={e => {
+          toggleRegisterMode()
+        }}
+      >
+        Don't have an account
+      </button>
+
+      <button
+        onClick={e => {
           loginWithGoogle()
         }}
         type="button"
         className="btn btn-warning"
       >
-        Google login
+        Login with google
+      </button>
+    </React.Fragment>
+  )
+}
+
+function RegisterForm({ onRegister, registerWithGoogle, toggleRegisterMode }) {
+  return (
+    <React.Fragment>
+      <form
+        id="loginForm"
+        style={{ width: "40%", margin: "0 auto" }}
+        onSubmit={e => {
+          e.preventDefault()
+
+          const name = e.target.name.value
+          const email = e.target.email.value
+          const password = e.target.password.value
+
+          onRegister(name, email, password)
+        }}
+      >
+        <img className="mb-4" src="" alt="" width="72" height="72" />
+        <h1 className="h3 mb-3 font-weight-normal">Please register</h1>
+
+        <div
+          id="loginErrorMessage"
+          style={{ display: "none" }}
+          className="alert alert-danger"
+        >
+          {" "}
+        </div>
+
+        <label htmlFor="nameEmail" className="sr-only">
+          Email address
+        </label>
+        <input
+          type="name"
+          name="name"
+          id="nameEmail"
+          className="form-control"
+          placeholder="User name"
+          required
+          autoFocus
+        />
+
+        <label htmlFor="inputEmail" className="sr-only">
+          Email address
+        </label>
+        <input
+          type="email"
+          name="email"
+          id="inputEmail"
+          className="form-control"
+          placeholder="Email address"
+          required
+        />
+
+        <label htmlFor="inputPassword" className="sr-only">
+          Password
+        </label>
+        <input
+          type="password"
+          name="password"
+          id="inputPassword"
+          className="form-control mb-3"
+          placeholder="Password"
+          required
+        />
+
+        <button className="btn btn-primary mb-3" type="submit">
+          Register
+        </button>
+
+        <div />
+      </form>
+
+      <button
+        onClick={e => {
+          toggleRegisterMode()
+        }}
+      >
+        Have an account
+      </button>
+
+      <button
+        onClick={e => {
+          registerWithGoogle()
+        }}
+        type="button"
+        className="btn btn-warning"
+      >
+        Register with google
       </button>
     </React.Fragment>
   )

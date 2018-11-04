@@ -149,6 +149,54 @@ class Auth extends React.Component {
       })
   }
 
+  register_with_facebook = () => {
+    // hide error message
+    $("#registerErrorMessage").hide()
+
+    var provider = new firebase.auth.FacebookAuthProvider()
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(function(result) {
+        // The signed-in user info.
+        const user = result.user
+
+        const name = user.displayName
+        const email = user.email
+        const firebase_user_id = user.uid
+
+        // pass data to create new account
+        axios
+          .post("/authentication", {
+            token_id: firebase_user_id,
+            name: name,
+            email: email
+          })
+          .then(data => {
+            // if result is fail, stop execution and show error message
+            if (data.data.result == "fail") {
+              $("#registerErrorMessage").text(
+                "You have an account with this Facebook account"
+              )
+              $("#registerErrorMessage").show()
+
+              return
+            }
+            // now ready to go to home page
+            window.location.replace("/teams")
+          })
+          .catch(error => {
+            console.log(error.message)
+          })
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorMessage = error.message
+
+        console.log(errorMessage)
+      })
+  }
+
   login_With_Goolge = () => {
     // hide error message
     $("#loginErrorMessage").hide()
@@ -176,6 +224,29 @@ class Auth extends React.Component {
     this.setState(prevState => ({ registerMode: !prevState.registerMode }))
   }
 
+  login_with_facebook = () => {
+    // hide error message
+    $("#loginErrorMessage").hide()
+
+    const provider = new firebase.auth.FacebookAuthProvider()
+
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(result => {
+        // The signed-in user info.
+        const user = result.user
+
+        this.verifyTokenAndGoToHome(user)
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorMessage = error.message
+
+        console.log(errorMessage)
+      })
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -183,12 +254,14 @@ class Auth extends React.Component {
           <LoginForm
             onLogin={this.signInWithEmailAndPassword}
             loginWithGoogle={this.login_With_Goolge}
+            loginWithFacebook={this.login_with_facebook}
             toggleRegisterMode={this.toggleRegisterMode}
           />
         ) : (
           <RegisterForm
             onRegister={this.registerWithEmailAndPassword}
             registerWithGoogle={this.register_with_google}
+            registerWithFacebook={this.register_with_facebook}
             toggleRegisterMode={this.toggleRegisterMode}
           />
         )}
@@ -197,7 +270,12 @@ class Auth extends React.Component {
   }
 }
 
-function LoginForm({ onLogin, loginWithGoogle, toggleRegisterMode }) {
+function LoginForm({
+  onLogin,
+  loginWithGoogle,
+  loginWithFacebook,
+  toggleRegisterMode
+}) {
   return (
     <React.Fragment>
       <form
@@ -272,11 +350,26 @@ function LoginForm({ onLogin, loginWithGoogle, toggleRegisterMode }) {
       >
         Login with google
       </button>
+
+      <button
+        onClick={e => {
+          loginWithFacebook()
+        }}
+        type="button"
+        className="btn btn-info"
+      >
+        Login with facebook
+      </button>
     </React.Fragment>
   )
 }
 
-function RegisterForm({ onRegister, registerWithGoogle, toggleRegisterMode }) {
+function RegisterForm({
+  onRegister,
+  registerWithGoogle,
+  registerWithFacebook,
+  toggleRegisterMode
+}) {
   return (
     <React.Fragment>
       <form
@@ -296,7 +389,7 @@ function RegisterForm({ onRegister, registerWithGoogle, toggleRegisterMode }) {
         <h1 className="h3 mb-3 font-weight-normal">Please register</h1>
 
         <div
-          id="loginErrorMessage"
+          id="registerErrorMessage"
           style={{ display: "none" }}
           className="alert alert-danger"
         >
@@ -363,6 +456,16 @@ function RegisterForm({ onRegister, registerWithGoogle, toggleRegisterMode }) {
         className="btn btn-warning"
       >
         Register with google
+      </button>
+
+      <button
+        onClick={e => {
+          registerWithFacebook()
+        }}
+        type="button"
+        className="btn btn-info"
+      >
+        Register with Facebook
       </button>
     </React.Fragment>
   )
